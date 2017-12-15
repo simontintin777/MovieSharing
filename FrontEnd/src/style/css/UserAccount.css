@@ -66,8 +66,18 @@ overflow: hidden;
     position: absolute;
 }
 
-body {
-    background-color: #e8e8e8;
+body.UserAccount {
+    margin: 0;
+    padding: 0;
+    background:#eee;
+    font-family: roboto;
+    display:flex; /* You delete it on your web page */
+    justify-content:center;/* and this - delete */
+    background: url('https://static.pexels.com/photos/573241/pexels-photo-573241.jpeg') center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 input[type=checkbox]+span {
@@ -84,13 +94,23 @@ input[type=checkbox]:checked+span {
     background-color: red;
 }
 
+input[type=submit]:submit+span {
+    background-color: red !important;
+}
+.leftMargin{
+
+}
 .boldInput {
+    margin:-10px auto;
     font-weight:bold;
-    margin-left: 28px;
-    padding-left: 279px;
-    padding-right: 122px;
-    padding-bottom: 8px;
-    background:white;   
+    text-align: center;
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif; 
+    color: #F05F40;
+    background-color:transparent;
+    border-top:0px;
+    border-left:0px;
+    border-right:0px;
+    border-bottom:0px
 }
 
 .bold {
@@ -138,28 +158,29 @@ input[type=checkbox]:checked+span {
 
 .conter  
 {  
-    background:white;  
-    width:800px;  
-    height:305px;  
-    border:1px solid rgba(202, 194, 194, 0.836);  
-    margin:0px auto;  
-    padding:40px;  
+    background:rgba(255, 255, 255, 0.479);  
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif; 
+    border:1px solid rgba(202, 194, 194, 0.836);
+    padding: 0px auto
 }  
 .conter h1  
 {  
+    color: #F05F40;
     height:20px;  
     font-size:25px;  
     line-height:20px;  
     text-indent:5px;  
-    margin-top:10px;  
+    margin-top:10px; 
+    margin-left:10px;   
+    margin-bottom: 20px
 }  
 
 .btn {
-    font-size: 3;
+    font-size: 12px !important;
     font-weight: 700;
     text-transform: uppercase;
     border: none;
-    border-radius: 30px;
+    border-radius: 100px;
     font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif; 
 }
 
@@ -193,6 +214,14 @@ input[type=checkbox]:checked+span {
     margin: auto
 }
 
+.leftMargin {
+    margin-left:20px
+}
+
 .watched {
     color: gray !important
+}
+
+.uploadProfile:hover{
+    background-color: blue!important;
 }

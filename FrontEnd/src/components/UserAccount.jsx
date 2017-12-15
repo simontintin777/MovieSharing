@@ -26,11 +26,6 @@ class UserAccount extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div>
-                    <Contact />
-                    <GitHubRepo />
-                </div>
-            
             </div>
         )
     }
