@@ -1,3 +1,7 @@
+body.UserAccount {
+    background: black!important;
+}
+
 .mainbody {
     background:#f0f0f0;
 }
@@ -66,6 +70,7 @@ overflow: hidden;
     position: absolute;
 }
 
+<<<<<<< HEAD
 body.UserAccount {
     margin: 0;
     padding: 0;
@@ -79,6 +84,8 @@ body.UserAccount {
     -o-background-size: cover;
     background-size: cover;
 }
+=======
+>>>>>>> 74b1252011ef143c4eb14517de9d8e0fafb2f8b2
 
 input[type=checkbox]+span {
     /* your style goes here */

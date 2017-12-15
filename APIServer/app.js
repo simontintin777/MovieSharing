@@ -21,6 +21,14 @@ const redis = require("redis");
 const redisConnection = require("./redis/redis-connection");
 const nrpSender = require("./redis/nrp-sender-shim")
 
+app.use((req, res, next) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Headers', req.get('Access-Control-Request-Headers'));
+    res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    req.get('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    next();
+});
+
 app.use(bodyParser.json());
 app.use(flash());
 app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
@@ -28,14 +36,20 @@ app.use(session({ secret: 'keyboard cat', resave: false, saveUninitialized: fals
 // session.
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use((req, res, next) => {
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Headers', req.get('Access-Control-Request-Headers'));
+    res.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    req.get('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    next();
+});
 
 
 
 
 //user() for stragtegies and configration
 passport.use('login', new Strategy({
-    usernameField: 'email',
+    usernameField: 'username',
     passwordField: 'password',
     passReqToCallback: true
 },
@@ -53,6 +67,8 @@ passport.use('login', new Strategy({
         });
         redisConnection.on("getUserByUsername-from-back-user:request:*", (message, channel)=>{
             let user = message.data.message;
+            console.log(user)
+            console.log(password)
             //user not exist
             if (!user) {
                 console.log('user not exist');
@@ -63,7 +79,12 @@ passport.use('login', new Strategy({
                 console.log("invalid password");
                 return done(null, false, req.flash('message', 'invalid password'));
             }
-            return done(null, true, user);
+            req.session.user = user;
+            const data = {
+                token: jwt.sign(user._id, jwtSecret),
+                user: user
+            }
+            return done(null, true, data);
         })
         // users().getUserByEmail(email).then((user)=>{
         //     //user not exist
