@@ -53,15 +53,20 @@ let exportedMethods = {
                 stars: movie.stars,
                 writers: movie.writers,
                 description: movie.description,
-                screenShots: movie.screenShots,
                 category: movie.category
             };
             newMovie.poster = im.processPoster(movie.poster, newMovie._id);
+            newMovie.screenShots = [];
+            console.log(movie.screenShots)
+            movie.screenShots.forEach((screen) => {
+                console.log(screen)
+                newMovie.screenShots.push(im.precessScreen(screen));
+            })
             return movieCollection.findOne({
                 name: movie.name
             }).then((movie) => {
                 if (movie) {
-                    throw "This movie already exists!";
+                    return false;
                 } else {
                     return movieCollection.insertOne(newMovie).then((insertInfo) => {
                         return insertInfo.insertedId;
@@ -124,42 +129,45 @@ let exportedMethods = {
     // search given keyword in all movie
     searchInMovie(keyword) {
         return es.searchInMovie(keyword).then((results) => {
-            let movies = [];
+            let promises = []
             if (results) {
                 results.forEach((result) => {
-                    movies.push(this.getMovieById(result._id));
+                    promises.push(this.getMovieById(result._id));
                 })
             }
-            return movies;
+            return Promise.all(promises).then((values) => {
+                return values;
+            })
         })
     },
 
     // search for given category
     searchByCategory(category) {
         return es.searchByCategory(category).then((results) => {
-            let movies = [];
+            let promises = []
             if (results) {
-                results.forEach(async (result) => {
-                    this.getMovieById(result._id).then((movie) => {
-                        console.log(movie);
-                        movies.push(movie);
-                    });
+                results.forEach((result) => {
+                    promises.push(this.getMovieById(result._id));
                 })
             }
-            return movies;
+            return Promise.all(promises).then((values) => {
+                return values;
+            })
         })
     },
 
     // search for keyword in given category
     searchInCategory(category, keyword) {
-        return es.searchInCategory(category, keyword).then((results) => {
-            let movies = [];
+        return es.searchInCategory(category, keyword).then(async (results) => {
+            let promises = []
             if (results) {
                 results.forEach((result) => {
-                    movies.push(this.getMovieById(result._id));
+                    promises.push(this.getMovieById(result._id));
                 })
             }
-            return movies;
+            return Promise.all(promises).then((values) => {
+                return values;
+            })
         })
     },
 
@@ -169,11 +177,19 @@ let exportedMethods = {
             screenShots.forEach((screen) => {
                 screens.push(im.precessScreen(screen));
             })
-            return movieCollection.updateOne({ _id: movieId }, {
-                $addToSet: {
-                    screenShots: screens
-                }
+            return movies().then((movieCollection) => {
+                return movieCollection.findOne({ _id: movieId }).then((movie) => {
+                    movie.screenShots.forEach((screen) => {
+                        screens.push(screen);
+                    });
+                    return movieCollection.updateOne({ _id: movieId }, {
+                        $addToSet: {
+                            screenShots: screens
+                        }
+                    });
+                })
             });
+
         });
     },
 
@@ -210,7 +226,7 @@ let exportedMethods = {
     //call it when add new comment
     addScore(movieId, score) {
         return movies().then((movieCollection) => {
-            return this.getMovieById(id).then((movie) => {
+            return this.getMovieById(movieId).then((movie) => {
                 let newScore;
                 if (!movie.score || movie.commentNum === 0) {
                     newScore = score;
@@ -234,7 +250,7 @@ let exportedMethods = {
     //call it when update comment
     updateScore(movieId, newScore, oldScore) {
         return movies().then((movieCollection) => {
-            return this.getMovieById(id).then((movie) => {
+            return this.getMovieById(movieId).then((movie) => {
                 let score;
                 if (!movie.score || movie.commentNum === 0) {
                     score = newScore;
@@ -257,7 +273,7 @@ let exportedMethods = {
     //call it when delete comment
     removeScore(movieId, score) {
         return movies().then((movieCollection) => {
-            return this.getMovieById(id).then((movie) => {
+            return this.getMovieById(movieId).then((movie) => {
                 let newScore;
                 if (movie.commentNum === 1) {
                     newScore = undefined;
@@ -266,10 +282,10 @@ let exportedMethods = {
                 }
                 let updateInfo = {
                     score: newScore,
+                    commentNum: movie.commentNum - 1
                 };
                 let updateCommand = {
                     $set: updateInfo,
-                    commentNum: movie.commentNum - 1
                 };
                 return movieCollection.updateOne({ _id: movieId }, updateCommand).then((result) => {
                     return this.getMovieById(movieId);
