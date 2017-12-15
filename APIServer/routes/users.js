@@ -5,6 +5,7 @@ const redisConnection = require("../redis/redis-connection");
 const nrpSender = require("../redis/nrp-sender-shim")
 const jwt = require('jsonwebtoken');
 const jwtSecret = "a secret phrase!!"
+const passport = require("passport");
 
 router.get("/getAllUser", async (req, res) => {
     let response = await nrpSender.sendMessage({
@@ -130,7 +131,7 @@ router.post('/login', (req, res, next) => {
         if (!success) {
             return res.status(400).json({
                 success: false,
-                message: 'Could not process the form'
+                message: 'login failed'
             });
         }
         else {
@@ -146,6 +147,8 @@ router.post('/login', (req, res, next) => {
 });
 //sign up
 router.post('/signup', async (req, res) => {
+    // console.log(req)
+    console.log(req.body);
     let info = req.body;
     let response = await nrpSender.sendMessage({
 
