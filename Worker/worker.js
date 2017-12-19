@@ -138,7 +138,7 @@ redisConnection.on('comment-delete:request:*', async (message, channel) => {
 redisConnection.on('sharemessage-post:request:*', async (message, channel) => {
 
     let info = message.data.message;
-    await sharedata.addMessage(info.senderId, info.receiverId, info.movieId, info.message).then(async (newadd) => {
+    await sharedata.addMessage(info.senderName, info.receiverName, info.movieName, info.message).then(async (newadd) => {
         let response = await nrpSender.sendMessage({
 
             redis: redisConnection,
@@ -151,15 +151,15 @@ redisConnection.on('sharemessage-post:request:*', async (message, channel) => {
         });
     })
 });
-redisConnection.on('sharemessage-getsenderId:request:*', async (message, channel) => {
+redisConnection.on('sharemessage-getsenderName:request:*', async (message, channel) => {
     console.log("redis");
     console.log(message.data.message);
-    let id = message.data.message
-    await sharedata.getMessagesBySenderId(id).then(async (shareInfo) => {
+    let name = message.data.message
+    await sharedata.getMessagesBySenderName(name).then(async (shareInfo) => {
         let response = await nrpSender.sendMessage({
 
             redis: redisConnection,
-            eventName: "getsenderId-from-back-share",
+            eventName: "getsenderName-from-back-share",
             data: {
 
                 message: await shareInfo
@@ -168,15 +168,15 @@ redisConnection.on('sharemessage-getsenderId:request:*', async (message, channel
         });
     })
 });
-redisConnection.on('sharemessage-getreceiverId:request:*', async (message, channel) => {
+redisConnection.on('sharemessage-getreceiverName:request:*', async (message, channel) => {
     console.log("redis");
     console.log(message.data.message);
-    let id = message.data.message
-    await sharedata.getMessagesByReceiverId(id).then(async (shareInfo) => {
+    let name = message.data.message
+    await sharedata.getMessagesByReceiverName(name).then(async (shareInfo) => {
         let response = await nrpSender.sendMessage({
 
             redis: redisConnection,
-            eventName: "getreceiverId-from-back-share",
+            eventName: "getreceiverName-from-back-share",
             data: {
 
                 message: await shareInfo
@@ -308,6 +308,23 @@ redisConnection.on('movie-getMovieById:request:*', async (message, channel) => {
     })
 });
 
+redisConnection.on('movie-getMovieByName:request:*', async (message, channel) => {
+    
+        let name = message.data.message;
+        await moviedata.getMovieByMovieName(name).then(async (movie) => {
+            let response = await nrpSender.sendMessage({
+    
+                redis: redisConnection,
+                eventName: "getMovieByName-from-back-movie",
+                data: {
+    
+                    message: await movie
+                },
+                expectsResponse: false
+            });
+        })
+    });
+
 redisConnection.on('movie-put:request:*', async (message, channel) => {
 
     let info = message.data.message;
@@ -324,6 +341,24 @@ redisConnection.on('movie-put:request:*', async (message, channel) => {
         });
     })
 });
+
+redisConnection.on('movie-getbyidlist:request:*', async (message, channel) => {
+
+        let ids = message.data.message
+        // console.log(ids)
+        await moviedata.getMoviesByIdList(ids).then(async (search) => {
+            let response = await nrpSender.sendMessage({
+    
+                redis: redisConnection,
+                eventName: "getbyidlist-from-back-movie",
+                data: {
+    
+                    message: await search
+                },
+                expectsResponse: false
+            });
+        })
+    });
 
 redisConnection.on('movie-searchKeyword:request:*', async (message, channel) => {
 

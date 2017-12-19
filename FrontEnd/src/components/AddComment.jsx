@@ -38,15 +38,15 @@ class AddComment extends React.Component {
                     category: message.category,
                     commentNum: message.commentNum,
                     description: message.description,
-                    directors: message.directors.split(','),
+                    directors: message.directors,
                     name: message.name,
                     poster: message.poster,
                     rating: message.score? message.score: "",
                     screenshots: message.screenShots,
-                    starring: message.stars.split(','),
+                    starring: message.stars,
                     watchedUsers: message.watchedUsers,
                     wishingUsers: message.wishingUsers,
-                    screenplay: message.writers.split(','),
+                    screenplay: message.writers,
                     year: message.year
                 }
             })
@@ -64,7 +64,7 @@ class AddComment extends React.Component {
     }
 
     handleSubmit(event) {
-        event.preventDefault();
+        // event.preventDefault();
         var dt = new Date();
 
         var AddComment = {
